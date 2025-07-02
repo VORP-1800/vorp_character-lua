@@ -308,8 +308,15 @@ function StartPrompts(value)
 		SetCamCoord(cam, newPos.x, newPos.y, newPos.z)
 		SetCamRot(cam, rot.x, rot.y, rot.z, 2)
 
-		if IsCharCreationFinished or (not IsInCharCreation and not IsInClothingStore) then
-			break
+	
+		if not IsInCharCreation then
+			if not IsInClothingStore then
+				break
+			end
+		else
+			if IsCharCreationFinished then
+				break
+			end
 		end
 	end
 
@@ -319,40 +326,35 @@ function StartPrompts(value)
 	RenderScriptCams(false, true, 500, true, true, 0)
 end
 
--- set up a default ped with default values
+
 function DefaultPedSetup(ped, male)
 	local gender                = male and "M" or "F"
+	HeadIndexTracker            = male and 8 or 1
 	PlayerSkin.Eyes             = joaat(("CLOTHING_ITEM_%s_EYES_001_TINT_014"):format(gender))
 	PlayerSkin.BodyType         = joaat(("CLOTHING_ITEM_%s_BODIES_UPPER_001_V_001"):format(gender))
 	PlayerSkin.Body             = PlayerSkin.BodyType
-	PlayerSkin.HeadType         = joaat(("CLOTHING_ITEM_%s_HEAD_008_V_001"):format(gender))
+	PlayerSkin.HeadType         = joaat(("CLOTHING_ITEM_%s_HEAD_00%d_V_001"):format(gender, HeadIndexTracker))
 	PlayerSkin.LegsType         = joaat(("CLOTHING_ITEM_%s_BODIES_LOWER_001_V_001"):format(gender))
 	PlayerSkin.Albedo           = joaat(("MP_HEAD_%sR1_SC08_C0_000_AB"):format(gender))
 	PlayerClothing.Teeth.comp   = joaat(("CLOTHING_ITEM_%s_TEETH_000"):format(gender))
 	PlayerClothing.Gunbelt.comp = joaat(("CLOTHING_ITEM_%s_GUNBELT_000_TINT_001"):format(gender))
 	PlayerSkin.Hair             = joaat(("CLOTHING_ITEM_%s_HAIR_001_BLONDE"):format(gender))
 
-	HeadIndexTracker            = male and 1 or 1
-	SkinColorTracker            = male and 1 or 1
+	SkinColorTracker            = 1
 
 	if not male then
+		IsPedReadyToRender()
 		EquipMetaPedOutfitPreset(ped, 7)
+		UpdatePedVariation()
 	end
-
-
-	IsPedReadyToRender()
-	EquipMetaPedOutfitPreset(ped, 3)
-	UpdatePedVariation()
 
 	if male then
 		-- work around to fix skin on char creator
 		IsPedReadyToRender()
-		UpdateShopItemWearableState(-457866027, -425834297)
-		UpdatePedVariation()
-		IsPedReadyToRender()
-		ApplyShopItemToPed(-218859683)
+		UpdateShopItemWearableState(-457866027, -425834297) -- fixes skin
+		ApplyShopItemToPed(-218859683)                 -- might be boots cant remember
 		ApplyShopItemToPed(PlayerClothing.Gunbelt.comp)
-		UpdateShopItemWearableState(-218859683, -2081918609)
+		UpdateShopItemWearableState(-218859683, -2081918609) -- fixes skin
 		UpdatePedVariation()
 	end
 
@@ -362,10 +364,11 @@ function DefaultPedSetup(ped, male)
 	PlayerSkin.eyebrows_opacity    = 1.0
 	PlayerSkin.eyebrows_color      = 0x3F6E70FF
 
-	ApplyOverlay("eyebrows", 1, 1, 1, 0,
-		0, 1.0, 0, 1,
-		0x3F6E70FF, 0,
-		0, 1, 1.0, PlayerSkin.Albedo)
+	ApplyOverlay("eyebrows", 1, 1, 1, 0, 0, 1.0, 0, 1, 0x3F6E70FF, 0, 0, 1, 1.0, PlayerSkin.Albedo)
+
+	IsPedReadyToRender()
+	EquipMetaPedOutfitPreset(ped, 3)
+	UpdatePedVariation()
 end
 
 function EnableCharCreationPrompts(boolean)

@@ -136,18 +136,19 @@ function ApplyOverlay(name, visibility, tx_id, tx_normal, tx_material, tx_color_
         Citizen.InvokeNative(0x6BEFAA907B076859, textureId)
     end
 
-    textureId = Citizen.InvokeNative(0xC5E7204F322E49EB, albedo, current_texture_settings.normal,
-        current_texture_settings.material)
+    if albedo == 0 then
+        albedo = CachedSkin.Albedo ~= 0 and CachedSkin.Albedo or current_texture_settings.albedo
+    end
+
+    textureId = Citizen.InvokeNative(0xC5E7204F322E49EB, albedo, current_texture_settings.normal, current_texture_settings.material)
 
 
     for k, v in pairs(Config.overlay_all_layers) do
         if v.visibility ~= 0 then
-            local overlay_id = Citizen.InvokeNative(0x86BB5FF45F193A02, textureId, v.tx_id, v.tx_normal,
-                v.tx_material, v.tx_color_type, v.tx_opacity, v.tx_unk)
+            local overlay_id = Citizen.InvokeNative(0x86BB5FF45F193A02, textureId, v.tx_id, v.tx_normal, v.tx_material, v.tx_color_type, v.tx_opacity, v.tx_unk)
             if v.tx_color_type == 0 then
                 Citizen.InvokeNative(0x1ED8588524AC9BE1, textureId, overlay_id, v.palette)
-                Citizen.InvokeNative(0x2DF59FFE6FFD6044, textureId, overlay_id, v.palette_color_primary,
-                    v.palette_color_secondary, v.palette_color_tertiary)
+                Citizen.InvokeNative(0x2DF59FFE6FFD6044, textureId, overlay_id, v.palette_color_primary, v.palette_color_secondary, v.palette_color_tertiary)
             end
 
             Citizen.InvokeNative(0x3329AAE2882FC8E4, textureId, overlay_id, v.var);
@@ -193,8 +194,7 @@ function SetupAnimscene()
     SetPedConfigFlag(Deputy, 130, true)
     SetPedConfigFlag(Deputy, 301, true)
     SetPedConfigFlag(Deputy, 315, true)
-    GiveWeaponToPed_2(Deputy, `WEAPON_REPEATER_CARBINE`, 100, true, false, 0, false, 0.5, 1.0, 752097756, false, 0.0,
-        false)
+    GiveWeaponToPed_2(Deputy, `WEAPON_REPEATER_CARBINE`, 100, true, false, 0, false, 0.5, 1.0, 752097756, false, 0.0,  false)
     FreezeEntityPosition(Deputy, true)
 
     local animscene = CreateAnimScene("script@mp@character_creator@transitions", 0.25, "pl_intro", false, true)
@@ -214,14 +214,14 @@ function SelectionPeds()
     Female_MP = CreatePed(joaat(fModel), -558.43, -3776.65, 237.7, 93.2, false, true, true, true)
     TaskStandStill(Female_MP, -1)
     SetEntityInvincible(Female_MP, true)
-    DefaultPedSetup(Female_MP, false)
+  --  DefaultPedSetup(Female_MP, false)
     SetModelAsNoLongerNeeded(fModel)
 
     LoadPlayer(mModel)
     Male_MP = CreatePed(joaat(mModel), -558.52, -3775.6, 237.7, 93.2, false, true, true, true)
     TaskStandStill(Male_MP, -1)
     SetEntityInvincible(Male_MP, true)
-    DefaultPedSetup(Male_MP, true)
+  --  DefaultPedSetup(Male_MP, true)
     SetModelAsNoLongerNeeded(mModel)
 
     return { Male_MP, Female_MP }
@@ -557,7 +557,7 @@ end
 function SetClothingStatus(components)
     for key, value in pairs(components) do
         if value.comp ~= -1 then
-            local status = GetResourceKvpString(tostring(value.comp))
+            local status = GetResourceKvpString(tostring(value.comp):format(CHARID or 0))
             if status == "true" then
                 RemoveTagFromMetaPed(Config.ComponentCategories[key])
             end

@@ -2,7 +2,7 @@ local PromptGroup <const> = GetRandomIntInRange(0, 0xffffff)
 local DeletePrompt
 local SelectPrompt
 local GoBackPrompt
-local selectedChar        = 1
+local selectedChar        = 1 
 local myChars             = {}
 local textureId           = -1
 local MaxCharacters
@@ -12,14 +12,16 @@ local random
 local canContinue         = false
 local MalePed
 local FemalePed
+local characterChosen = false
 local MenuData            = exports.vorp_menu:GetMenuData()
-Core                      = exports.vorp_core:GetCore()
+Core                      = exports.vorp_core:GetCore() 
 Custom                    = nil
 Peds                      = {}
 CachedSkin                = {}
 CachedComponents          = {}
 T                         = Translation.Langs[Lang]
-local width, _            = GetCurrentScreenResolution()
+CHARID                    = nil
+local width, _            = GetCurrentScreenResolution()  
 
 local imgPath             = "<img style='max-height:450px;max-width:280px;float: center;'src='nui://" .. GetCurrentResourceName() .. "/images/%s.png'>"
 local img                 = "<img style='margin-top: 10px;margin-bottom: 10px; margin-left: -10px;'src='nui://" .. GetCurrentResourceName() .. "/images/%s.png'>"
@@ -41,8 +43,8 @@ CreateThread(function()
 	UiPromptSetControlAction(DeletePrompt, Config.keys.prompt_delete.key)
 	str = VarString(10, 'LITERAL_STRING', str)
 	UiPromptSetText(DeletePrompt, str)
-	UiPromptSetEnabled(DeletePrompt, true)
-	UiPromptSetVisible(DeletePrompt, true)
+	UiPromptSetEnabled(DeletePrompt, Config.AllowPlayerDeleteCharacter)
+	UiPromptSetVisible(DeletePrompt, Config.AllowPlayerDeleteCharacter)
 	UiPromptSetHoldMode(DeletePrompt, 5000)
 	UiPromptSetGroup(DeletePrompt, PromptGroup, 0)
 	UiPromptRegisterEnd(DeletePrompt)
@@ -82,6 +84,20 @@ AddEventHandler("vorpcharacter:selectCharacter", function(myCharacters, mc, rand
 	if #myCharacters < 1 then
 		return TriggerEvent("vorpcharacter:startCharacterCreator")
 	end
+
+	CreateThread(function()
+		while not characterChosen do
+			SetAmbientAnimalDensityMultiplierThisFrame(0.0)
+			SetAmbientHumanDensityMultiplierThisFrame(0.0)
+			SetAmbientPedDensityMultiplierThisFrame(0.0)
+			SetScenarioHumanDensityMultiplierThisFrame(0.0)
+			SetScenarioPedDensityMultiplierThisFrame(0.0)
+			SetVehicleDensityMultiplierThisFrame(0.0)
+			Wait(0)
+		end
+		characterChosen = false
+	end)
+	
 	random = rand
 	myChars = myCharacters
 	MaxCharacters = mc
@@ -143,8 +159,8 @@ end)
 
 --FUNCTIONS
 local function LoadFaceFeatures(ped, skin)
-	for key, value in pairs(Config.FaceFeatures) do
-		for label, v in pairs(value) do
+	for _, value in pairs(Config.FaceFeatures) do
+		for _, v in pairs(value) do
 			if skin[v.comp] and skin[v.comp] ~= 0 then
 				SetCharExpression(ped, v.hash, skin[v.comp])
 			end
@@ -157,7 +173,7 @@ local function ApplyAllComponents(category, value, ped, set)
 		return
 	end
 
-	local status = not set and "false" or GetResourceKvpString(tostring(value.comp))
+	local status = not set and "false" or GetResourceKvpString((tostring(value.comp)):format(CHARID or 0))
 	if status == "true" then
 		return RemoveTagFromMetaPed(Config.ComponentCategories[category])
 	end
@@ -285,6 +301,7 @@ function CharSelect()
 	repeat Wait(0) until IsScreenFadedOut()
 	Wait(1000)
 	local charIdentifier = myChars[selectedChar].charIdentifier
+	CHARID = charIdentifier
 	local nModel = tostring(myChars[selectedChar].skin.sex)
 	CachedSkin = myChars[selectedChar].skin
 	CachedComponents = myChars[selectedChar].components
@@ -312,6 +329,7 @@ function CharSelect()
 	local heading = coords.heading
 	local isDead = myChars[selectedChar].isDead
 	TriggerEvent("vorp:initCharacter", playerCoords, heading, isDead) -- in here players will be removed from instance
+	characterChosen = true
 end
 
 function StartSwapCharacters()
@@ -324,6 +342,7 @@ function StartSwapCharacters()
 	Citizen.InvokeNative(0xFDB74C9CC54C3F37, options.timecycle.strenght)
 	StartPlayerTeleport(PlayerId(), options.playerpos.x, options.playerpos.y, options.playerpos.z, 0.0, true, true, true, true)
 	repeat Wait(0) until not IsPlayerTeleportActive()
+	SetEntityCoords(PlayerPedId(), options.playerpos.x, options.playerpos.y, options.playerpos.z,false,false,false,false) -- sometimes it doesnt tp with devmode. so we enforce
 	PrepareMusicEvent(options.music)
 	Wait(100)
 	TriggerMusicEvent(options.music)
@@ -342,9 +361,19 @@ function StartSwapCharacters()
 	for key, value in pairs(myChars) do
 		LoadPlayer(value.skin.sex)
 		local data = Config.SpawnPosition[random].positions[key]
-		if not data then return error("your config spawn locations doesnt have enough spawn locations you need to add: " .. #myChars .. "Spawn locations") end
-		data.PedHandler = CreatePed(joaat(value.skin.sex), data.spawn.x, data.spawn.y, data.spawn.z, data.spawn.w, true, false, false, false)
-		repeat Wait(0) until DoesEntityExist(data.PedHandler)
+		if not data then
+			return error("your config spawn locations doesnt have enough spawn locations you need to add: " .. #myChars .. "Spawn locations")
+		end
+
+		data.PedHandler = CreatePed(joaat(value.skin.sex), data.spawn.x, data.spawn.y, data.spawn.z, data.spawn.w, false, false, false, false)
+
+		local start = GetGameTimer()
+		repeat Wait(0) until DoesEntityExist(data.PedHandler) or GetGameTimer() - start > 5000
+		if GetGameTimer() - start > 5000 then
+			print("Failed to create peds")
+			break
+		end
+
 		LoadCharacterSelect(data.PedHandler, value.skin, value.components)
 		data.Cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", data.camera.x, data.camera.y, data.camera.z, data.camera.rotx, data.camera.roty, data.camera.rotz, data.camera.fov, false, 2)
 		SetEntityInvincible(data.PedHandler, true)
@@ -402,12 +431,38 @@ end
 local function DeleleteSelectedChaacter(menu)
 	local dataConfig = Config.SpawnPosition[random].positions[selectedChar]
 	DeleteEntity(dataConfig.PedHandler)
+
+	for i, ped in ipairs(Peds) do
+		if ped == dataConfig.PedHandler then
+			table.remove(Peds, i)
+			break
+		end
+	end
+
 	TriggerServerEvent("vorpcharacter:deleteCharacter", myChars[selectedChar])
 	table.remove(myChars, selectedChar)
 
 	if #myChars == 0 or myChars == nil then
 		TriggerEvent("vorpcharacter:startCharacterCreator")
 		return finishSelection(false)
+	end
+
+	for i = selectedChar, #myChars do
+		local currentData = Config.SpawnPosition[random].positions[i]
+		local nextData = Config.SpawnPosition[random].positions[i + 1]
+
+		if nextData and nextData.PedHandler then
+			currentData.PedHandler = nextData.PedHandler
+			currentData.Cam = nextData.Cam
+			nextData.PedHandler = nil
+			nextData.Cam = nil
+		end
+	end
+
+	local lastPosition = Config.SpawnPosition[random].positions[#myChars + 1]
+	if lastPosition then
+		lastPosition.PedHandler = nil
+		lastPosition.Cam = nil
 	end
 
 	createMainCam()
@@ -467,9 +522,6 @@ function EnableSelectionPrompts(menu)
 		local label = VarString(10, 'LITERAL_STRING', T.PromptLabels.promptselectChar)
 		while not WhileSwaping do
 			UiPromptSetActiveGroupThisFrame(PromptGroup, label, 0, 0, 0, 0)
-			if not Config.AllowPlayerDeleteCharacter then
-				UiPromptSetEnabled(DeletePrompt, false)
-			end
 
 			if UiPromptHasHoldModeCompleted(DeletePrompt) then
 				return DeleleteSelectedChaacter(menu)
@@ -722,7 +774,7 @@ function StartOverlay()
 		Citizen.InvokeNative(0x6BEFAA907B076859, textureId) -- remove texture
 	end
 
-	textureId = Citizen.InvokeNative(0xC5E7204F322E49EB, CachedSkin.albedo, current_texture_settings.normal, current_texture_settings.material)
+	textureId = Citizen.InvokeNative(0xC5E7204F322E49EB, CachedSkin.Albedo, current_texture_settings.normal, current_texture_settings.material)
 	for k, v in ipairs(Config.overlay_all_layers) do
 		if v.visibility ~= 0 then
 			local overlay_id = Citizen.InvokeNative(0x86BB5FF45F193A02, textureId, v.tx_id, v.tx_normal, v.tx_material, v.tx_color_type, v.tx_opacity, v.tx_unk)
@@ -799,15 +851,12 @@ end)
 
 -- apply whistle data on character selected
 RegisterNetEvent("vorp:SelectedCharacter", function(charid)
+	CHARID = charid
 	-- if it exists set is current values that were saved when player first made a character
 	local whistleData <const> = GetResourceKvpString(("vorp_character_whistle_%s"):format(charid))
 	if whistleData then
-		print("Apply whistle data")
 		local data <const> = json.decode(whistleData)
 		local ped <const> = PlayerPedId()
-		print(data.pitch)
-		print(data.clarity)
-		print(data.style)
 		if data.pitch and data.pitch > 0 then
 			SetWhistleConfigForPed(ped, "Ped.WhistlePitch", data.pitch)
 		elseif data.clarity and data.clarity > 0 then
@@ -817,7 +866,6 @@ RegisterNetEvent("vorp:SelectedCharacter", function(charid)
 		end
 	else
 		if (WHISTLE.clarity and WHISTLE.clarity > 0) or (WHISTLE.pitch and WHISTLE.pitch > 0) or (WHISTLE.style and WHISTLE.style > 0) then
-			print("Save whistle data")
 			SetResourceKvpNoSync(("vorp_character_whistle_%s"):format(charid), json.encode({
 				clarity = WHISTLE.clarity,
 				pitch = WHISTLE.pitch,
