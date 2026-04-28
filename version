@@ -1,3 +1,10 @@
+<2.1>
+- added export to open outfits menu from other resources (check docs) for more information
+- added ability to have multiple shops in one location
+- added ability to wait before rdo scene starts using vorpcharacter:stopLoadingScene event (check docs) for more information
+- refactor menus to use mouse cursor + keyboard controls and other features from vorp menu
+- fixed buy Bow for females
+- other small fixes and improvements
 <2.0>
 - added multiple shop menus to single locations allowing you to have multiple shops in one location
 - added busyspinner in character creation

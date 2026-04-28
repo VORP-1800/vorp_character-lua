@@ -52,7 +52,7 @@ Translation.Langs = {
             press = "press",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- change for you lang
             inputlang = "[A-Za-z ]{5,20}",          -- change for you lang
-            confirmpurchase = "Confirm purchase",
+            confirmpurchase = "Confirm",
 
         },
         Other = {
@@ -297,7 +297,7 @@ Translation.Langs = {
             element2 = { label = "Blush", desc = "Choose makeup  of your character" },
             element3 = { label = "Eyeliner", desc = "Choose makeup of your character" },
             element4 = { label = "Shadow", desc = "Choose makeup of your character" },
-            element5 = { label = "Texture", desc = "Choose makeupof your character", desc2 = "max" },
+            element5 = { label = "Texture", desc = "Choose makeupof your character", desc2 = " max " },
             element6 = { label = "Color", desc = "Choose makeup of your character" },
             element7 = { label = "Color secondary", desc = "Choose makeup of your character", desc2 = " max 10" },
             element8 = { label = "Variant", desc = "Choose the makeup variant" },
@@ -357,7 +357,7 @@ Translation.Langs = {
             press = "premere",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- change for you lang
             inputlang = "[A-Za-z ]{5,20}",          -- change for you lang
-            confirmpurchase = "Confermare l'acquisto",
+            confirmpurchase = "Confermare",
         },
         Other = {
             spinnertext = "La selezione del personaggio è in caricamento",
@@ -613,7 +613,7 @@ Translation.Langs = {
             element2 = { label = "Blush", desc = "Scegli il trucco del tuo personaggio" },
             element3 = { label = "Eyeliner", desc = "Scegli il trucco del tuo personaggio" },
             element4 = { label = "Ombretto", desc = "Scegli il trucco del tuo personaggio" },
-            element5 = { label = "Texture", desc = "Scegli il trucco del tuo personaggio", desc2 = "max" },
+            element5 = { label = "Texture", desc = "Scegli il trucco del tuo personaggio", desc2 = " max " },
             element6 = { label = "Colore", desc = "Scegli il trucco del tuo personaggio" },
             element7 = { label = "Colore secondario", desc = "Scegli il trucco del tuo personaggio", desc2 = " max 10" },
             element8 = { label = "Variante", desc = "Scegli la variante del trucco" },
@@ -673,7 +673,7 @@ Translation.Langs = {
             press = "imprensa",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- change for you lang
             inputlang = "[A-Za-z ]{5,20}",          -- change for you lang
-            confirmpurchase = "Confirm purchase",
+            confirmpurchase = "Confirm",
         },
         Other = {
             spinnertext = "A seleção de personagens está carregando",
@@ -924,7 +924,7 @@ Translation.Langs = {
             element2 = { label = "Corar", desc = "Ajuste o Blush" },
             element3 = { label = "Delineador", desc = "Ajuste o Delineador" },
             element4 = { label = "Sombras", desc = "Ajuste as Sombras" },
-            element5 = { label = "Texturas", desc = "Ajuste as Texturas", desc2 = "max" },
+            element5 = { label = "Texturas", desc = "Ajuste as Texturas", desc2 = " max " },
             element6 = { label = "Cor", desc = "Ajuste a Cor" },
             element7 = { label = "Cor Secundária", desc = "Ajuste a Cor Secundária", desc2 = " max 10" },
             element8 = { label = "Variant", desc = "Escolha a variação de maquiagem" },
@@ -983,7 +983,7 @@ Translation.Langs = {
             press = "pressione",
             inputlangdesc = "[A-Za-z ]{5,2000000}",
             inputlang = "[A-Za-z ]{5,20}",
-            confirmpurchase = "Confirmar compra",
+            confirmpurchase = "Confirmar",
         },
         Other = {
             spinnertext = "Carregando seleção de personagem",
@@ -1209,11 +1209,11 @@ Translation.Langs = {
             element2 = { label = "Blush", desc = "Escolha a maquiagem do seu personagem" },
             element3 = { label = "Delineador", desc = "Escolha a maquiagem do seu personagem" },
             element4 = { label = "Sombra", desc = "Escolha a maquiagem do seu personagem" },
-            element5 = { label = "Textura", desc = "Escolha a textura da maquiagem do seu personagem", desc2 = "máximo" },
+            element5 = { label = "Textura", desc = "Escolha a textura da maquiagem do seu personagem", desc2 = " máximo " },
             element6 = { label = "Cor", desc = "Escolha a cor da maquiagem do seu personagem" },
-            element7 = { label = "Cor secundária", desc = "Escolha a cor secundária da maquiagem do seu personagem", desc2 = "máximo 10" },
+            element7 = { label = "Cor secundária", desc = "Escolha a cor secundária da maquiagem do seu personagem", desc2 = " máximo 10" },
             element8 = { label = "Variante", desc = "Escolha a variante da maquiagem" },
-            element9 = { label = "Opacidade", desc = "Escolha a opacidade da maquiagem do seu personagem", desc2 = "máximo 0.9" },
+            element9 = { label = "Opacidade", desc = "Escolha a opacidade da maquiagem do seu personagem", desc2 = " máximo 0.9" },
             Foundation = "Base"
         },
     },
@@ -1269,7 +1269,7 @@ Translation.Langs = {
             press = "presse",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- change for you lang
             inputlang = "[A-Za-z ]{5,20}",          -- change for you lang
-            confirmpurchase = "Confirm purchase",
+            confirmpurchase = "Confirm",
         },
         Other = {
             spinnertext = "La sélection des caractères est en cours de chargement",
@@ -1530,7 +1530,7 @@ Translation.Langs = {
             element2 = { label = "Blush", desc = "Choisissez le maquillage de votre personnage" },
             element3 = { label = "Eyeliner", desc = "Choisissez le maquillage de votre personnage" },
             element4 = { label = "Ombre", desc = "Choisissez le maquillage de votre personnage" },
-            element5 = { label = "Texture", desc = "Choisissez le maquillage de votre personnage", desc2 = "max" },
+            element5 = { label = "Texture", desc = "Choisissez le maquillage de votre personnage", desc2 = " max " },
             element6 = { label = " Couleur ", desc = " Choisissez le maquillage de votre personnage " },
             element7 = { label = "Couleur secondaire", desc = "Choisissez le maquillage de votre personnage", desc2 = " max 10" },
             element8 = { label = "Variant", desc = "Choose the makeup variant" },
@@ -1834,7 +1834,7 @@ Translation.Langs = {
             element2 = { label = "Rouge", desc = "Wähle die Schminke deines Charakters" },
             element3 = { label = "Eyeliner", desc = "Wähle die Schminke deines Charakters" },
             element4 = { label = "Lidschatten", desc = "Wähle die Schminke deines Charakters" },
-            element5 = { label = "Textur", desc = "Wähle die Schminke deines Charakters", desc2 = "max" },
+            element5 = { label = "Textur", desc = "Wähle die Schminke deines Charakters", desc2 = " max " },
             element6 = { label = "Farbe", desc = "Wähle die Schminke deines Charakters" },
             element7 = { label = "Sekundärfarbe", desc = "Wähle die Schminke deines Charakters", desc2 = " max 10" },
             element8 = { label = "Variant", desc = "Wählen die Make-up-Variante" },
@@ -1894,7 +1894,7 @@ Translation.Langs = {
             press = "pulsa",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- cambia según tu idioma
             inputlang = "[A-Za-z ]{5,20}",          -- cambia según tu idioma
-            confirmpurchase = "Confirmar compra",
+            confirmpurchase = "Confirmar",
         },
         Other = {
             spinnertext = "La selección de personajes se está cargando",
@@ -2138,11 +2138,11 @@ Translation.Langs = {
             element2 = { label = "Rubor", desc = "Elige el rubor" },
             element3 = { label = "Delineador de ojos", desc = "Elige el delineador de ojos" },
             element4 = { label = "Sombra de ojos", desc = "Elige la sombra de ojos" },
-            element5 = { label = "Textura", desc = "Elige la textura del maquillaje", desc2 = "máximo" },
+            element5 = { label = "Textura", desc = "Elige la textura del maquillaje", desc2 = " máximo " },
             element6 = { label = "Color", desc = "Elige el color del maquillaje" },
-            element7 = { label = "Color secundario", desc = "Elige el color secundario del maquillaje", desc2 = "máximo 10" },
+            element7 = { label = "Color secundario", desc = "Elige el color secundario del maquillaje", desc2 = " máximo 10" },
             element8 = { label = "Variante", desc = "Elige la variante del maquillaje" },
-            element9 = { label = "Opacidad", desc = "Elige la opacidad del maquillaje", desc2 = "máximo 0.9" },
+            element9 = { label = "Opacidad", desc = "Elige la opacidad del maquillaje", desc2 = " máximo 0.9" },
             Foundation = "Base"
         },
     },
@@ -2197,7 +2197,7 @@ Translation.Langs = {
             press = "apasa",
             inputlangdesc = "[A-Za-z ]{5,2000000}", -- schimba pentru limba ta
             inputlang = "[A-Za-z ]{5,20}",          -- schimba pentru limba ta
-            confirmpurchase = "Confirma achizitia",
+            confirmpurchase = "Confirma",
         },
         Other = {
             spinnertext = "Se incarca lista cu caractere",
@@ -2437,7 +2437,7 @@ Translation.Langs = {
             element2 = { label = "Ruje", desc = "Alege machiajul caracterului tau" },
             element3 = { label = "Eyeliner", desc = "Alege machiajul caracterului tau" },
             element4 = { label = "Umbra", desc = "Alege machiajul caracterului tau" },
-            element5 = { label = "Textura", desc = "Alege machiajul caracterului tau", desc2 = "maxim" },
+            element5 = { label = "Textura", desc = "Alege machiajul caracterului tau", desc2 = " maxim " },
             element6 = { label = "Culoare", desc = "Alege machiajul caracterului tau" },
             element7 = { label = "Culoare secundara", desc = "Alege machiajul caracterului tau", desc2 = " maxim 10" },
             element8 = { label = "Varianta", desc = "Alege varianta de machiaj" },

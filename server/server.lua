@@ -145,10 +145,16 @@ RegisterServerEvent("vorpcharacter:deleteCharacter", function(selectedChar)
 	end
 end)
 
+-- only allow the player to use this once since they have to leave to change characters, can be removed once theres a way to allow changing characters in run time
+local charSelected <const> = {}
 RegisterServerEvent("vorp_CharSelectedCharacter", function(charid)
 	local _source = source
-	local user = Core.getUser(_source)
+	if charSelected[_source] then return print("player has already selected a character") end
+
+	-- player exists
+	local user <const> = Core.getUser(_source)
 	if user then
+		charSelected[_source] = true
 		user.setUsedCharacter(charid)
 	end
 end)
@@ -171,7 +177,6 @@ RegisterNetEvent("vorpcharacter:setPlayerCompChange", function(skinValues, comps
 end)
 
 
-RegisterNetEvent("vorp_character:server:SpawnUniqueCharacter")
 AddEventHandler("vorp_character:server:SpawnUniqueCharacter", function(source)
 	local userCharacters = GetPlayerData(source)
 	if not userCharacters then
@@ -225,7 +230,7 @@ Core.Callback.Register("vorp_character:callback:PayToShop", function(source, cal
 	end
 	local character = user.getUsedCharacter
 	local money = character.money
-	local amountToPay = arguments.amount
+	local amountToPay = tonumber(arguments.amount)
 
 	if money < amountToPay then
 		SetTimeout(5000, function()
@@ -322,14 +327,26 @@ end)
 Core.Callback.Register("vorp_character:callback:GetOutfits", function(source, callback)
 	local character = Core.getUser(source).getUsedCharacter
 
-	---@diagnostic disable-next-line: undefined-global
-	MySQL.query("SELECT * FROM outfits WHERE `identifier` = ? AND `charidentifier` = ?", { character.identifier, character.charIdentifier }, function(Outfits)
+	MySQL.query("SELECT * FROM outfits WHERE `charidentifier` = ?", { character.charIdentifier }, function(Outfits)
 		return callback(Outfits)
 	end)
 end)
 
 Core.Callback.Register("vorp_character:callback:SetOutfit", function(source, callback, arguments)
-	local character = Core.getUser(source).getUsedCharacter
+	local user = Core.getUser(source)
+	if not user then return callback(false) end
+
+	local character = user.getUsedCharacter
+	local unpacked = msgpack.unpack(arguments.Outfit)
+	arguments.Outfit = unpacked
+
+	if type(arguments.Outfit.comps) ~= "string" then
+		arguments.Outfit.comps = json.encode(arguments.Outfit.comps)
+	end
+
+	if type(arguments.Outfit.compTints) ~= "string" then
+		arguments.Outfit.compTints = json.encode(arguments.Outfit.compTints)
+	end
 
 	character.updateComps(arguments.Outfit.comps or '{}')
 	character.updateCompTints(arguments.Outfit.compTints or '{}')
@@ -338,10 +355,26 @@ Core.Callback.Register("vorp_character:callback:SetOutfit", function(source, cal
 end)
 
 Core.Callback.Register("vorp_character:callback:DeleteOutfit", function(source, callback, arguments)
-	local character = Core.getUser(source).getUsedCharacter
+	local user = Core.getUser(source)
+	if not user then return callback(false) end
 
-	---@diagnostic disable-next-line: undefined-global
-	MySQL.query("DELETE FROM outfits WHERE identifier = ? AND id = ?", { character.identifier, arguments.Outfit.id })
+	local character = user.getUsedCharacter
+	-- why is it using steam? each character should have its own set of outfits
+	MySQL.query.await("DELETE FROM outfits WHERE charidentifier = ? AND id = ?", { character.charIdentifier, arguments.id })
 
 	return callback(true)
+end)
+
+-- EXPORT TO OPEN MENU THROUGH OTHER SCRIPTS
+exports("OpenOutfitsMenu", function(source)
+	local user = Core.getUser(source)
+	if not user then return end
+	local character = user.getUsedCharacter
+
+	local result = MySQL.query.await("SELECT id, title, comps, compTints FROM outfits WHERE `charidentifier` = ?", { character.charIdentifier })
+	if not result then return end
+
+	local packed = msgpack.pack(result)
+	TriggerClientEvent("vorp_character:Client:OpenOutfitsMenu", source, packed)
+	return true
 end)
